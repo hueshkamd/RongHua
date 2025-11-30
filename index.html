@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>加载效果页面 (800x1100)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+		}
+        
+        body {
+            /* 页面边界 */
+            background-color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+			background-color: #f0e6d2;
+        }
+        
+        /* 将盒子居中 */
+        .page-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+                
+        /* 核心容器 */
+        .video-container {
+            position: relative;
+            width: 640px; 
+            height: 1030px;
+            overflow: hidden; 
+        }
+        
+        /* 背景视频样式*/
+        #bg-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+			object-position: center 80%;
+            z-index: 1;
+        }
+        
+        /* 所有图片素材的基础样式 */
+        .overlay-image {
+            position: absolute;
+            z-index: 2; 
+        }
+		
+		/*背景 补*/
+		#background{
+			position: absolute;
+			color: red;
+			bottom: -10%;
+			left: 80%;
+			transform: translate(-50%, -50%);
+			width: 40%; 
+			height: auto; 
+			z-index: 5;
+		}
+        
+        /* 进度条框 */
+        #progress-bg {
+            position: absolute;
+            bottom: 34%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 40%; 
+            height: auto; 
+            z-index: 2;
+			border-radius: 9999px;
+        }
+        
+        /* 加载文字 */
+        #loading-text {
+            bottom: 38%;
+            left: 48%;
+            transform: translate(-50%, -50%);
+            width: 15%;
+        }
+        
+        /* 进度条填充图片 */
+        #progress-fill {
+			position: absolute;
+			bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            object-fit: cover;
+            z-index: 3;
+			border-radius: 9999px;
+        }
+		#loading-dots {
+		    position: absolute;
+		    bottom: 40%;
+		    left: 61%;
+		    transform: translate(-50%, -50%);
+		    width: 50px;
+		    height: auto;
+		    z-index: 4;
+		    opacity: 0;
+		
+		    /*应用循环动画 */
+		    animation: loopReveal 2s linear infinite; 
+		}
+		
+		/* 定义循环渐显的关键帧 */
+		@keyframes loopReveal {
+		    0% {
+		        clip-path: polygon(0 0, 0 0, 0 100%, 0% 100%); 
+		        opacity: 1;
+		    }
+		    80% {
+		        clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); 
+		        opacity: 1;
+		    }
+		    100% {
+		        clip-path: polygon(100% 0, 100% 0, 100% 100%, 100% 100%); 
+		        opacity: 0; 
+		    }
+		}
+    </style>
+</head>
+<body>
+
+    <div class="page-wrapper">
+        <div class="video-container">
+            <video id="bg-video" autoplay muted>
+                <source src="rh1/微信视频2025-11-22_164022_701.mp4" type="video/mp4">
+            </video>
+			<img src="rh1/4f139de8941233d5913a59c7085d93a8.png" class="overlay-image" id="background">
+            <img src="rh1/4f7eade5801e9aeb186a11cf1a434997.png" alt="Progress Bar Background" class="overlay-image" id="progress-bg">
+            <img src="rh1/def774c711866318006dbccaa910fe13.png" alt="Loading Text" class="overlay-image" id="loading-text">
+            <img src="rh1/41237132fc5464e8c11d416b9eefbe0b.png" alt="Progress Fill" class="overlay-image" id="progress-fill">
+			<img src="rh1/微信图片_20251122164248_106_280.png" alt="循环渐显" class="overlay-image" id="loading-dots">
+        </div>
+    </div>
+
+    <script> /*加载素材*/
+        const loadingDots = document.getElementById('loading-dots');
+        const progressFill = document.getElementById('progress-fill');
+        const progressBg = document.getElementById('progress-bg');
+        const videoContainer = document.querySelector('.video-container');
+        
+        window.addEventListener('load', () => {
+            if (progressBg && progressFill) {
+                const bgRect = progressBg.getBoundingClientRect();
+                const containerRect = videoContainer.getBoundingClientRect();
+                progressFill.style.left = (bgRect.left - containerRect.left) + 'px';
+                progressFill.style.bottom = (containerRect.bottom - bgRect.bottom) + 'px';
+                progressFill.style.height = bgRect.height + 'px';
+                let progress = 0; /*进度初始值*/
+				/*进度条动画 */
+                const interval = setInterval(() => {
+                    progress += 1.05;
+                    progressFill.style.width = (progress / 100) * bgRect.width + 'px';
+					/*进度加载>=100% */
+                    if (progress >= 100) {
+                        clearInterval(interval); /*结束动画 */
+                    }
+                }, 50);
+            }
+        });
+    </script>
+
+</body>
+</html>
